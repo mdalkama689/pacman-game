@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>404 Pacman with Share</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <style>
+      body {
+        background-color: black;
+        margin: 0;
+        padding: 0;
+        color: white;
+        font-family: sans-serif;
+      }
+
+      #warning {
+        background-color: #ffcc00;
+        color: #000;
+        text-align: center;
+        padding: 12px;
+        font-weight: bold;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 2000;
+        display: none;
+      }
+
+      .share-container {
+        position: fixed;
+        bottom: 80px;
+        right: 16px;
+        z-index: 1000;
+      }
+
+      .share-toggle {
+        color: white;
+        font-size: 48px;
+        cursor: pointer;
+        transition: transform 0.3s ease-in-out;
+      }
+
+      .share-toggle:hover {
+        transform: scale(1.1);
+      }
+
+      .share-box {
+        position: absolute;
+        bottom: 50px;
+        right: 0;
+        width: 290px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        padding: 10px 16px;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+
+      .share-box.show {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .share-link {
+        display: flex;
+        align-items: center;
+        background-color: #22c55e;
+        color: white;
+        padding: 10px;
+        border-radius: 6px;
+        text-decoration: none;
+        margin-top: 6px;
+        transition: background-color 0.3s ease;
+      }
+
+      .share-link:hover {
+        background-color: #16a34a;
+      }
+
+      .share-link.add {
+        background-color: #2563eb;
+      }
+
+      .share-link.add:hover {
+        background-color: #1d4ed8;
+      }
+
+      .share-link i {
+        margin-right: 8px;
+      }
+
+      @media (max-width: 1024px) {
+        #canvas {
+          margin-top: 80px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .share-box {
+          width: 260px;
+        }
+      }
+
+      #restartBtn {
+        position: absolute;
+        bottom: -50px;
+        left: 20px;
+        padding: 10px 20px;
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        z-index: 1001;
+        display: block;
+      }
+
+      #restartBtn:hover {
+        background: #1d4ed8;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="warning">
+      ⚠️ This game is supported only on desktop/laptop (keyboard required).
+    </div>
+
+    <div style="position: relative">
+      <canvas id="canvas" height="480" width="512"></canvas>
+
+      <button id="restartBtn">Restart Game</button>
+    </div>
+
+    <div class="share-container">
+      <i id="share-icon" class="fas fa-info-circle share-toggle"></i>
+      <div id="share-box" class="share-box">
+        <a
+          href="https://wa.me/?text=I%20found%20this%20useful%20pacman%20game%20,%20check%20it%20out:%20https://seosaurus.in/tools/"
+          class="share-link"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <i class="fab fa-whatsapp"></i>
+          Share this on WhatsApp
+        </a>
+        <a
+          href="https://seosaurus.in/tools/"
+          class="share-link add"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <i class="fas fa-plus-circle"></i>
+          Add this tool to your website
+        </a>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+      const shareIcon = document.getElementById("share-icon");
+      const shareBox = document.getElementById("share-box");
+      const warningBanner = document.getElementById("warning");
+
+      function isMobileOrTablet() {
+        return (
+          /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+          window.innerWidth < 1024
+        );
+      }
+
+      function showWarningIfNeeded() {
+        if (isMobileOrTablet()) {
+          warningBanner.style.display = "block";
+        } else {
+          warningBanner.style.display = "none";
+        }
+      }
+
+      function updateShareBehavior() {
+        const deviceType = window.innerWidth < 1024 ? "small" : "big";
+
+        if (deviceType === "small") {
+          // Mobile behavior: click to toggle
+          shareIcon.onclick = () => {
+            shareBox.classList.toggle("show");
+          };
+          shareIcon.onmouseenter = null;
+          shareIcon.onmouseleave = null;
+        } else {
+          // Desktop behavior: hover to show
+          shareIcon.onclick = null;
+          shareIcon.onmouseenter = () => shareBox.classList.add("show");
+          shareIcon.onmouseleave = () => shareBox.classList.remove("show");
+          shareBox.onmouseenter = () => shareBox.classList.add("show");
+          shareBox.onmouseleave = () => shareBox.classList.remove("show");
+        }
+      }
+
+      window.addEventListener("resize", () => {
+        updateShareBehavior();
+        showWarningIfNeeded();
+      });
+
+      window.addEventListener("DOMContentLoaded", () => {
+        updateShareBehavior();
+        showWarningIfNeeded();
+      });
+    </script>
+
+    <!-- Game scripts -->
+    <script src="js/utils.js"></script>
+    <script src="js/collision.js"></script>
+    <script src="js/assets.js"></script>
+    <script src="js/draw.js"></script>
+    <script src="js/update.js"></script>
+    <script src="js/controls.js"></script>
+    <script src="js/objects.js"></script>
+    <script src="js/objectsLoad.js"></script>
+    <script src="js/ai.js"></script>
+    <script src="js/game.js"></script>
+  </body>
+</html>
